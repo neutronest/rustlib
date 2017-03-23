@@ -1,0 +1,17 @@
+[package]
+name= "rustlib"
+version = "0.1.0"
+authors = ["Chaos Dong"]
+
+
+description = "Some experimental code about Rust"
+repository = ""
+documentation = ""
+keywords = ["neulib"]
+readme = "README.md"
+license = "MIT"
+
+[features]
+stats = []
+
+[dependencies]
