@@ -36,7 +36,7 @@ impl<T> Graph<T> {
 
 /* version 2 */
 
-
+/*
 pub struct Node<'a, T:'a> {
 
     inner_value: T,
@@ -63,5 +63,33 @@ pub struct Graph<'a, T:'a> {
 impl<'a, T> Graph<'a, T> {
     pub fn new(other_nodes: Vec<Node<'a, T>>) -> Self {
         Graph{nodes: other_nodes}
+    }
+}
+ */
+
+/* version 3 */
+type AdjNode<T> = Rc<RefCell<Node<T>>>;
+pub struct Node<T> {
+    pub inner_value: T,
+    pub adj_node: AdjNode<T>
+}
+
+impl<T> Node<T> {
+    pub fn new(value: T) -> Rc<RefCell<Node<T>>> {
+        let node = Node {inner_value: value, adj_node: vec![]};
+        Rc::new(RefCell::new(node))
+    }
+
+    pub fn add_adj_node(self, other_node: &Node<T>) {
+        let adj_node_ref = self.adj_node.0.try_borrow_mut();
+        match adj_node_ref {
+            Ok(adj_node) => {
+                adj_node.push(other_node.0.clone());
+            },
+
+            Err(e) => {
+                return;
+            }
+        }
     }
 }
