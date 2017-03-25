@@ -68,28 +68,53 @@ impl<'a, T> Graph<'a, T> {
  */
 
 /* version 3 */
-type AdjNode<T> = Rc<RefCell<Node<T>>>;
-pub struct Node<T> {
+type NodeRef<T> = Rc<RefCell<NodeElement<T>>>;
+pub struct NodeElement<T> {
     pub inner_value: T,
-    pub adj_node: AdjNode<T>
+    pub adj_nodes: Vec<NodeRef<T>>
 }
 
+pub struct Node<T>(pub NodeRef<T>);
+
 impl<T> Node<T> {
-    pub fn new(value: T) -> Rc<RefCell<Node<T>>> {
-        let node = Node {inner_value: value, adj_node: vec![]};
-        Rc::new(RefCell::new(node))
+    pub fn new(value: T) -> Node<T> {
+        let node_element = NodeElement {inner_value: value, adj_nodes: vec![]};
+        Node(Rc::new(RefCell::new(node_element)))
     }
 
-    pub fn add_adj_node(self, other_node: &Node<T>) {
-        let adj_node_ref = self.adj_node.0.try_borrow_mut();
+    pub fn add_adj_node(&self, other_node: &Node<T>) {
+
+        let mut node_ref_res = self.0.try_borrow_mut();
+        match node_ref_res {
+            Ok(mut node_ref) =>  {
+                node_ref.adj_nodes.push(other_node.0.clone());
+            },
+            Err(e) => {
+                return;
+            }
+        }
+        /*
+        let adj_node_ref = self.adj_nodes[0].try_borrow_mut();
         match adj_node_ref {
             Ok(adj_node) => {
-                adj_node.push(other_node.0.clone());
+                adj_node.push(other_node.clone());
             },
 
             Err(e) => {
                 return;
             }
         }
+        */
+    }
+}
+
+pub struct Graph<T> {
+    pub nodes: Vec<Node<T>>
+}
+
+impl<T> Graph<T> {
+
+    pub fn new(nodes_: Vec<Node<T>>) -> Self {
+        Graph {nodes: nodes_ }
     }
 }
