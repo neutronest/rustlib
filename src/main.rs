@@ -1,5 +1,9 @@
 extern crate rustlib;
 use rustlib::graph;
+use rustlib::skiplist;
+
+use std::cell::{RefCell, Cell};
+use std::rc::Rc;
 
 fn main() {
 
@@ -24,5 +28,25 @@ fn main() {
             .map(|x| x.borrow().inner_value).collect::<Vec<_>>();
         println!("node {} is connected to: {:?}", value, adj_values);
     }
-    
+
+    // test skiplist
+    println!("=== Test2: SkipList! ===");
+    let sp = skiplist::SkipList {
+        root_opt: Some(Rc::new(RefCell::new(skiplist::Node {
+            key: String::from("abc"),
+            value: 6666,
+            forward_nodes: vec![]
+        }))),
+        level: 4
+    };
+    let v_opt = sp.get(String::from("abc"));
+    match v_opt {
+        Some(v) => {
+            println!("{}", v);
+        },
+        None => {
+            
+        }
+    }
+
 }
