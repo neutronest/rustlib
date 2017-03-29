@@ -46,17 +46,19 @@ impl<T> SkipList<T> where
                 let mut cur_node = root_ref.borrow(); 
                 let mut cur_level = self.level;
                 while cur_level >= 1 {
+                    
+                    // in each iteration
+                    // keep the guard that the current key <= the key_
+                    // get!
                     if cur_node.key == key_ {
                         return Some(cur_node.value);
-                    } else if  cur_node.key < key_ {
-
-                        // side condition
-                        // check if the last node
-                        if cur_node.forward_nodes.len() == 0 {
+                    } else {
+                        // currnet key < key_
+                        let next_node = cur_node.forward_nodes[cur_level].borrow();
+                        if next_node.key <= key_ {
+                            let cur_node = next_node;
+                        } else {
                             cur_level -= 1;
-                        } else if cur_node.forward_nodes[cur_level].borrow().key < key_ {
-                            // move to the next node
-                            let mut cur_node = cur_node.forward_nodes[cur_level].borrow();
                         }
                     }
                 }
@@ -67,7 +69,14 @@ impl<T> SkipList<T> where
                 return None;
             }
         }
-
         return None;
+    }
+
+    pub fn insert(&self, key_: String, value_: T) {
+        
+    }
+
+    pub fn delete(&self, key_: String, value_: T) {
+        
     }
 }
